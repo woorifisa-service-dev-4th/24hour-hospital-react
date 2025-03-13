@@ -1,20 +1,20 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import OwnerForm from './components/OwnerForm';
-import OwnerSearch from './components/OwnerSearch';
-import OwnerDetails from './components/OwnerDetails';
-import OwnersList from './components/OwnersList';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import OwnerForm from "./components/OwnerForm";
+import OwnerSearch from "./components/OwnerSearch";
+import OwnersList from "./components/OwnersList";
+import OwnerDetails from "./components/OwnerDetails";
 
 function App() {
   return (
     <Router>
-      <Switch>
-        <Route exact path="/owners/new" component={OwnerForm} />
-        <Route exact path="/owners" component={OwnerSearch} />
-        <Route exact path="/owners/list" component={OwnersList} />
-        <Route exact path="/owners/:id" component={OwnerDetails} />
+      <Routes>
+        <Route path="/owners/new" element={<OwnerForm />} />
+        <Route path="/owners" element={<OwnerSearch />} />
+        <Route path="/owners/list" element={<OwnersList />} />
+        <Route path="/owners/:id" element={<OwnerDetails />} />
         {/* 필요에 따라 다른 라우트 추가 */}
-      </Switch>
+      </Routes>
     </Router>
   );
 }
