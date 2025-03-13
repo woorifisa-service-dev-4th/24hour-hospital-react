@@ -4,6 +4,7 @@ import OwnerForm from "./components/OwnerForm";
 import OwnerSearch from "./components/OwnerSearch";
 import OwnersList from "./components/OwnersList";
 import OwnerDetails from "./components/OwnerDetails";
+import VetsList from "./components/VetsList";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Route path="/owners" element={<OwnerSearch />} />
         <Route path="/owners/list" element={<OwnersList />} />
         <Route path="/owners/:id" element={<OwnerDetails />} />
+        <Route path="/vets" element={<VetsList/>} />
         {/* 필요에 따라 다른 라우트 추가 */}
       </Routes>
     </Router>

@@ -1,21 +1,27 @@
-// src/components/VetsList.jsx
 import React, { useState, useEffect } from 'react';
+import '../styles.css';
 
 function VetsList() {
   const [vets, setVets] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const pageSize = 10; // 한 페이지당 항목 수
+  const totalPages = Math.ceil(vets.length / pageSize);
 
   useEffect(() => {
     async function fetchVets() {
       try {
-        // API 엔드포인트에 맞게 URL 조정 (예: /vets?page=...)
-        const response = await fetch(`http://localhost:8080/vets?page=${currentPage}`);
+        const response = await fetch('http://localhost:8080/vets');
         if (response.ok) {
           const data = await response.json();
-          // data 객체가 { vets: [...], totalPages: X } 형태라고 가정
-          setVets(data.vets);
-          setTotalPages(data.totalPages);
+          // API가 배열을 직접 반환하는 경우
+          if (Array.isArray(data)) {
+            setVets(data);
+          } else if (data.vets) {
+            // API가 { vets: [...]} 형태로 반환할 경우
+            setVets(data.vets);
+          } else {
+            console.error('예상치 못한 데이터 형식:', data);
+          }
         } else {
           console.error('수의사 데이터를 가져오지 못했습니다.');
         }
@@ -24,12 +30,17 @@ function VetsList() {
       }
     }
     fetchVets();
-  }, [currentPage]);
+  }, []);
+
+  // 현재 페이지에 해당하는 수의사 데이터만 추출
+  const indexOfLastVet = currentPage * pageSize;
+  const indexOfFirstVet = indexOfLastVet - pageSize;
+  const currentVets = vets.slice(indexOfFirstVet, indexOfLastVet);
 
   return (
-    <div>
+    <div className="component-container">
       <h2>Veterinarians</h2>
-      <table border="1">
+      <table>
         <thead>
           <tr>
             <th>Name</th>
@@ -37,16 +48,21 @@ function VetsList() {
           </tr>
         </thead>
         <tbody>
-          {vets.map((vet) => (
-            <tr key={vet.id}>
-              <td>{vet.firstName} {vet.lastName}</td>
-              <td>{vet.specialist ? vet.specialist : 'None'}</td>
+          {currentVets.length > 0 ? (
+            currentVets.map((vet) => (
+              <tr key={vet.id}>
+                <td>{vet.firstName} {vet.lastName}</td>
+                <td>{vet.specialist ? vet.specialist : 'None'}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="2">No veterinarians found.</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
-      {/* 간단한 페이지네이션 */}
-      <div>
+      <div className="pagination">
         {currentPage > 1 && (
           <>
             <button onClick={() => setCurrentPage(1)}>« First</button>
@@ -74,3 +90,4 @@ function VetsList() {
 }
 
 export default VetsList;
+
