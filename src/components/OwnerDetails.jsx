@@ -33,30 +33,35 @@ function OwnerDetails() {
   if (!owner) return <div>No owner found.</div>;
 
   return (
-    <div>
+    <div className="component-container">
       <h2>Owner Information</h2>
-      <table className="table table-striped">
-        <tbody>
-          <tr>
-            <th>Name</th>
-            <td>{owner.firstName} {owner.lastName}</td>
-          </tr>
-          <tr>
-            <th>Address</th>
-            <td>{owner.address}</td>
-          </tr>
-          <tr>
-            <th>City</th>
-            <td>{owner.city}</td>
-          </tr>
-          <tr>
-            <th>Telephone</th>
-            <td>{owner.telephone}</td>
-          </tr>
-        </tbody>
-      </table>
-      <a href={`/${owner.id}/edit`} className="btn btn-primary">Edit Owner</a>
-      <a href={`/${owner.id}/pets/new`} className="btn btn-primary">Add New Pet</a>
+      
+      <div className="table-container">
+        <table className="table table-striped">
+          <tbody>
+            <tr>
+              <th>Name</th>
+              <td>{owner.firstName} {owner.lastName}</td>
+            </tr>
+            <tr>
+              <th>Address</th>
+              <td>{owner.address}</td>
+            </tr>
+            <tr>
+              <th>City</th>
+              <td>{owner.city}</td>
+            </tr>
+            <tr>
+              <th>Telephone</th>
+              <td>{owner.telephone}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="buttons-container">
+        <a href="/vets" className="btn btn-primary">Vets List</a>
+      </div>
     </div>
   );
 }

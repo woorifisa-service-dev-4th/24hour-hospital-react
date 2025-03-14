@@ -27,24 +27,24 @@ h2 {
   margin-bottom: 20px;
 }
 
-/* 📌 테이블 스타일 */
+/* 📌 테이블 가운데 정렬 */
 .table-container {
-  width: 100%;
   display: flex;
   justify-content: center;
 }
 
 .table {
-  width: 90%; /* 📌 표가 너무 넓지 않도록 */
-  max-width: 700px; /* 📌 표 크기 제한 */
+  width: 90%;
+  max-width: 700px;
   border-collapse: collapse;
   border-radius: 8px;
   overflow: hidden;
 }
 
+/* 📌 테이블 스타일 */
 .table th, .table td {
   padding: 12px;
-  text-align: left;
+  text-align: center; /* 텍스트도 중앙 정렬 */
   vertical-align: middle;
   border-bottom: 1px solid #e9ecef;
 }
@@ -63,11 +63,6 @@ h2 {
 
 .table tbody tr:nth-child(even) {
   background-color: #f8f9fa;
-}
-
-/* 📌 테이블과 버튼 사이 간격 */
-.table-container + .buttons-container {
-  margin-top: 20px;
 }
 
 /* 📌 버튼 컨테이너 - 우측 정렬 */

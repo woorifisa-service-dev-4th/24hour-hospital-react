@@ -11,7 +11,7 @@ function App() {
     <Router>
       <Routes>
         <Route path="/owners/new" element={<OwnerForm />} />
-        <Route path="/owners" element={<OwnerSearch />} />
+        <Route path="/" element={<OwnerSearch />} />
         <Route path="/owners/list" element={<OwnersList />} />
         <Route path="/owners/:id" element={<OwnerDetails />} />
         <Route path="/vets" element={<VetsList/>} />
