@@ -60,7 +60,8 @@ function OwnerDetails() {
       </div>
 
       <div className="buttons-container">
-        <a href="/vets" className="btn btn-primary">Vets List</a>
+        <a href="/" className="btn btn-primary">Edit Owner</a>
+        <a href="/" className="btn btn-primary">Add New Pet</a>
       </div>
     </div>
   );
