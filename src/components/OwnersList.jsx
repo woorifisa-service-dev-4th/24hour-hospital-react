@@ -1,112 +1,117 @@
 import React, { useState, useEffect } from 'react';
-import '../styles.css'; // 파일 경로에 맞게 조정
+import { useLocation } from 'react-router-dom';
+import '../styles.css';
 
 function OwnersList() {
+  const location = useLocation();
   const [owners, setOwners] = useState([]);
+  const [filteredOwners, setFilteredOwners] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const pageSize = 10; // 한 페이지당 항목 수
-
-  // 전체 페이지 수는 owners 배열 길이에 기반 (클라이언트 페이지네이션)
-  const totalPages = Math.ceil(owners.length / pageSize);
+  const pageSize = 10;
 
   useEffect(() => {
-    async function fetchOwners() {
-      setLoading(true);
-      setError(null);
-      try {
-        const response = await fetch('http://localhost:8080/owners');
-        if (response.ok) {
-          const data = await response.json();
-          if (Array.isArray(data)) {
+    // 상태로 전달된 데이터가 있으면 이를 사용
+    if (location.state && location.state.owners) {
+      setFilteredOwners(location.state.owners);
+    } else {
+      async function fetchOwners() {
+        setLoading(true);
+        setError(null);
+        try {
+          const response = await fetch('http://localhost:8080/owners');
+          if (response.ok) {
+            const data = await response.json();
             setOwners(data);
-          } else if (data.owners) {
-            setOwners(data.owners);
+            setFilteredOwners(data);  // 처음 로드 시 모든 소유자 목록을 설정
           } else {
-            console.error('예상치 못한 데이터 형식:', data);
+            setError('소유자 목록 로딩 실패: ' + response.statusText);
           }
-        } else {
-          setError('소유자 목록 로딩 실패: ' + response.statusText);
+        } catch (error) {
+          setError('네트워크 에러: ' + error.message);
         }
-      } catch (error) {
-        setError('네트워크 에러: ' + error.message);
+        setLoading(false);
       }
-      setLoading(false);
+
+      fetchOwners();
     }
-    fetchOwners();
-  }, []);
+  }, [location.state]);
 
   // 현재 페이지에 해당하는 소유자 데이터만 슬라이스
   const indexOfLastOwner = currentPage * pageSize;
   const indexOfFirstOwner = indexOfLastOwner - pageSize;
-  const currentOwners = owners.slice(indexOfFirstOwner, indexOfLastOwner);
+  const currentOwners = filteredOwners.slice(indexOfFirstOwner, indexOfLastOwner);
 
   return (
-    <div className="component-container">
-      <h2>Owners</h2>
-      {loading && <p>Loading...</p>}
-      {error && <p className="error-message">{error}</p>}
-      {!loading && !error && (
-        <>
-          <table className="table table-striped">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Address</th>
-                <th>City</th>
-                <th>Telephone</th>
-                <th>Pets</th>
-              </tr>
-            </thead>
-            <tbody>
-              {currentOwners.length > 0 ? (
-                currentOwners.map((owner) => (
-                  <tr key={owner.id}>
-                    <td>
-                      <a href={`/owners/${owner.id}`}>
-                        {owner.firstName} {owner.lastName}
-                      </a>
-                    </td>
-                    <td>{owner.address}</td>
-                    <td>{owner.city}</td>
-                    <td>{owner.telephone}</td>
-                    <td>{owner.pets ? owner.pets.join(', ') : '-'}</td>
-                  </tr>
-                ))
-              ) : (
+      <div className="component-container">
+        <h2>Owners</h2>
+        {loading && <p>Loading...</p>}
+        {error && <p className="error-message">{error}</p>}
+        {!loading && !error && (
+            <>
+              <table className="table table-striped">
+                <thead>
                 <tr>
-                  <td colSpan="5">No owners found.</td>
+                  <th>Name</th>
+                  <th>Address</th>
+                  <th>City</th>
+                  <th>Telephone</th>
+                  <th>Pets</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-          <div className="pagination">
-            {currentPage > 1 && (
-              <>
-                <button onClick={() => setCurrentPage(1)}>« First</button>
-                <button onClick={() => setCurrentPage(currentPage - 1)}>‹ Prev</button>
-              </>
-            )}
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <button
-                key={page}
-                onClick={() => setCurrentPage(page)}
-                disabled={page === currentPage}
-              >
-                {page}
-              </button>
-            ))}
-            {currentPage < totalPages && (
-              <>
-                <button onClick={() => setCurrentPage(currentPage + 1)}>Next ›</button>
-                <button onClick={() => setCurrentPage(totalPages)}>Last »</button>
-              </>
-            )}
-          </div>
-        </>
-      )}
-    </div>
+                </thead>
+                <tbody>
+                {currentOwners.length > 0 ? (
+                    currentOwners.map((owner) => (
+                        <tr key={owner.id}>
+                          <td>
+                            <a href={`/owners/${owner.id}`}>
+                              {owner.firstName} {owner.lastName}
+                            </a>
+                          </td>
+                          <td>{owner.address}</td>
+                          <td>{owner.city}</td>
+                          <td>{owner.telephone}</td>
+                          <td>
+                            {owner.pets.length > 0
+                                ? owner.pets.map(pet => pet.name).join(', ')
+                                : '-'}
+                          </td>
+                        </tr>
+                    ))
+                ) : (
+                    <tr>
+                      <td colSpan="5">No owners found.</td>
+                    </tr>
+                )}
+                </tbody>
+              </table>
+              <div className="pagination">
+                {currentPage > 1 && (
+                    <>
+                      <button onClick={() => setCurrentPage(1)}>« First</button>
+                      <button onClick={() => setCurrentPage(currentPage - 1)}>‹ Prev</button>
+                    </>
+                )}
+                {Array.from({ length: Math.ceil(filteredOwners.length / pageSize) }, (_, i) => i + 1).map((page) => (
+                    <button
+                        key={page}
+                        onClick={() => setCurrentPage(page)}
+                        disabled={page === currentPage}
+                    >
+                      {page}
+                    </button>
+                ))}
+                {currentPage < Math.ceil(filteredOwners.length / pageSize) && (
+                    <>
+                      <button onClick={() => setCurrentPage(currentPage + 1)}>Next ›</button>
+                      <button onClick={() => setCurrentPage(Math.ceil(filteredOwners.length / pageSize))}>Last »</button>
+                    </>
+                )}
+              </div>
+            </>
+        )}
+      </div>
   );
 }
 
