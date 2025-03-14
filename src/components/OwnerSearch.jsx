@@ -11,12 +11,17 @@ function OwnerSearch({ onSearchResults }) {
     setError(null);
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8080/owners?lastName=${encodeURIComponent(lastName)}`);
-      if (response.ok) {
-        const data = await response.json();
-        onSearchResults && onSearchResults(data);
-      } else {
-        setError('검색 실패: ' + response.statusText);
+      const query = lastName.trim() ? `?lastName=${encodeURIComponent(lastName)}` : ''; // 검색어 없으면 전체 조회
+      const response = await fetch(`http://localhost:8080/owners${query}`, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/json',
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text(); // 응답 내용을 확인
+        throw new Error(`검색 실패: ${response.status} ${response.statusText} - ${errorText}`);
       }
     } catch (error) {
       setError('네트워크 에러: ' + error.message);
