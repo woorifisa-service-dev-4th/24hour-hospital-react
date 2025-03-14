@@ -18,7 +18,7 @@ function OwnerSearch({ onSearchResults }) {
       const response = await fetch(`http://localhost:8080/owners${query}`, {
         method: 'GET',
         headers: {
-          'Accept': 'application/json', // 서버가 JSON을 반환하도록 명확히 요청
+          'Accept': 'application/json',
         },
       });
 
