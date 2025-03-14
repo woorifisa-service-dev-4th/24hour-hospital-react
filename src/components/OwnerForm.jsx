@@ -29,7 +29,6 @@ function OwnerForm() {
     setLoading(true);
     
     try {
-      // 수정된 엔드포인트: /owners/new에서 /owners로 변경
       const response = await fetch('http://localhost:8080/owners', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -37,18 +36,15 @@ function OwnerForm() {
       });
       
       if (response.ok) {
-        // 서버는 단순히 생성된 Owner의 ID(Long)를 반환합니다
         const ownerId = await response.json();
         console.log('Created owner with ID:', ownerId);
         
         setSuccessMessage('Owner created successfully!');
         
-        // 잠시 성공 메시지를 보여준 후 리다이렉트
         setTimeout(() => {
-          navigate(`/owners/${ownerId}`); // 새로 생성된 owner의 ID로 리다이렉트
+          navigate(`/owners/${ownerId}`);
         }, 1500);
       } else {
-        // 서버 응답의 자세한 내용 확인을 위해 응답 본문을 함께 출력
         const errorText = await response.text();
         console.error('Server response:', errorText);
         setError(`에러 발생 (${response.status}): ${response.statusText}`);
@@ -112,14 +108,15 @@ function OwnerForm() {
             required
           />
         </div>
-        <div className="form-group">
-          <div className="col-sm-offset-2 col-sm-10">
-            <button className="btn" type="submit" disabled={loading}>
-              {loading ? 'Submitting...' : 'Add Owner'}
-            </button>
-          </div>
+        
+        {/* 🔹 버튼을 오른쪽 정렬 */}
+        <div className="button-container">
+          <button className="btn" type="submit" disabled={loading}>
+            {loading ? 'Submitting...' : 'Add Owner'}
+          </button>
         </div>
       </form>
+      
       {successMessage && <p className="success-message">{successMessage}</p>}
       {error && <p className="error-message">{error}</p>}
     </div>
